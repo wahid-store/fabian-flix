@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABIAN FLIX | Movies & Series</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b10;color:white;font-family:Arial,sans-serif}
+header{padding:20px 6%;background:#141720;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:900;color:#ff304f}
+.logo span{color:white}
+input,select{padding:12px;border-radius:9px;background:#202532;color:white;border:1px solid #383f50}
+main{padding:30px 6%;max-width:1400px;margin:auto}
+.hero{padding:45px 28px;border-radius:18px;background:linear-gradient(120deg,#68182d,#20253a,#10131b);margin-bottom:35px}
+.hero h1{font-size:clamp(36px,7vw,65px);margin:15px 0}
+.hero p{color:#ddd;line-height:1.7}
+button{padding:12px 18px;background:#ff304f;color:white;border:0;border-radius:8px;cursor:pointer;font-weight:bold}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+#search{width:min(100%,300px)}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:17px}
+.card{background:#171b25;border:1px solid #2b3040;border-radius:12px;overflow:hidden;cursor:pointer}
+.poster{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-size:23px;font-weight:bold;background:linear-gradient(145deg,#8c2946,#242c43)}
+.info{padding:12px}
+.info h3{margin:0 0 8px}
+.info p{font-size:13px;color:#adb4c4}
+dialog{background:#151923;color:white;border:1px solid #454b5a;border-radius:14px;width:min(800px,95%)}
+dialog::backdrop{background:#000c}
+video{width:100%;max-height:65vh;background:black}
+footer{text-align:center;padding:30px;color:#999}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:550px){header{padding:16px 4%}main{padding:20px 4%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hero{padding:25px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">FABIAN <span>FLIX</span></div>
+  <input id="search" placeholder="Search movies...">
+</header>
+<main>
+  <section class="hero">
+    <p>YOUR PERSONAL CINEMA</p>
+    <h1>FABIAN FLIX</h1>
+    <p>Discover your next favorite movie.</p>
+    <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Explore Movies ↓</button>
+  </section>
+  <section id="catalog">
+    <h2>Popular Movies & Series</h2>
+    <div class="controls">
+      <select id="genre">
+        <option value="All">All genres</option>
+        <option>Action</option><option>Sci-Fi</option>
+        <option>Drama</option><option>Adventure</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+<dialog id="details">
+  <h2 id="movieTitle"></h2>
+  <p id="movieDescription"></p>
+  <video id="player" controls playsinline></video>
+  <p id="notice">This is a demo. Online video playback will be connected later.</p>
+  <button onclick="document.getElementById('details').close();document.getElementById('player').pause()">Close</button>
+</dialog>
+<footer>© 2026 FABIAN FLIX · All rights reserved.</footer>
+<script>
+const movies=[
+ {title:"Interstellar",year:2014,genre:"Sci-Fi",rating:"8.7",description:"A journey beyond the stars."},
+ {title:"Inception",year:2010,genre:"Action",rating:"8.8",description:"A mind-bending adventure."},
+ {title:"Dune",year:2021,genre:"Adventure",rating:"8.0",description:"A journey across a desert planet."},
+ {title:"The Dark Knight",year:2008,genre:"Action",rating:"9.0",description:"A hero faces a dangerous enemy."},
+ {title:"Breaking Bad",year:2008,genre:"Drama",rating:"9.5",description:"A teacher enters a dangerous world."}
+];
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const g=document.getElementById("genre").value;
+ const grid=document.getElementById("grid");
+ grid.replaceChildren();
+ movies.filter(m=>m.title.toLowerCase().includes(q)&&(g==="All"||m.genre===g)).forEach(m=>{
+  const card=document.createElement("article");
+  card.className="card";
+  const poster=document.createElement("div");
+  poster.className="poster";
+  poster.textContent=m.title;
+  const info=document.createElement("div");
+  info.className="info";
+  const title=document.createElement("h3");
+  title.textContent=m.title;
+  const meta=document.createElement("p");
+  meta.textContent=m.year+" · "+m.genre+" · ★ "+m.rating;
+  info.append(title,meta);
+  card.append(poster,info);
+  card.onclick=()=>{
+   document.getElementById("movieTitle").textContent=m.title;
+   document.getElementById("movieDescription").textContent=m.description;
+   document.getElementById("player").removeAttribute("src");
+   document.getElementById("details").showModal();
+  };
+  grid.append(card);
+ });
+}
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("genre").addEventListener("change",render);
+render();
+</script>
+</body>
+</html>
